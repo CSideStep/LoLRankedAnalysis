@@ -35,10 +35,23 @@ class RiotApi:
         id = self.get_id_by_name_region(name, region)
         return self.get_rank_by_id(id, region, soloq)
 
+    def get_acc_id_by_name_region(self, name:str, region:str):
+        pass
+    
+    def get_acc_id_by_name_euw():
+        pass
+
+    def get_acc_id_by_name_na():
+        pass
+
+    def get_matchlist_by_acc_id():
+        pass
+
 if __name__ == "__main__":
     rapi = RiotApi()
     rapi.update_credentials()
     rapi.print_key() 
     id = rapi.get_id_by_name_euw("C SideStep")
+    print(id)
     print(rapi.get_rank_by_id(id))
     print(rapi.get_rank_by_name("Alien Mazort"))
