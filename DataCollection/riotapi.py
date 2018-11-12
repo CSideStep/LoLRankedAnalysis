@@ -1,4 +1,7 @@
 import requests
+from riot_constants import EUW, NA
+from riot_classes import Account
+
 class RiotApi:
     key:str
 
@@ -13,45 +16,26 @@ class RiotApi:
     def print_key(self):
         print(self.key)
 
-    def get_id_by_name_region(self, name:str, region:str):
+    def get_acc_by_name(self, name:str, region:str):
         name =  name.replace(" ", "%20")
-        my_request = f"https://{region}.api.riotgames.com/lol/summoner/v3/summoners/by-name/{name}?api_key={self.key}"
-        return int(requests.get(my_request).json()["id"])
+        json = requests.get(f"https://{region}.api.riotgames.com/lol/summoner/v3/summoners/by-name/{name}?api_key={self.key}").json()
+        return Account(json["name"], json["accountId"], json["id"], region)        
 
-    def get_id_by_name_euw(self, name:str):
-        return self.get_id_by_name_region(name, "euw1")
-
-    def get_id_by_name_na(self, name:str):
-        return self.get_id_by_name_region(name, "na1")    
-
-    def get_rank_by_id(self, id:int, region:str="euw1",soloq:bool=True):
-        json = requests.get(f"https://{region}.api.riotgames.com/lol/league/v3/positions/by-summoner/{id}?api_key={self.key}").json()
+    def get_rank(self, acc:Account,soloq:bool=True):
+        json = requests.get(f"https://{acc.region}.api.riotgames.com/lol/league/v3/positions/by-summoner/{acc.id}?api_key={self.key}").json()
         for queue in json:
             if queue["queueType"] == "RANKED_SOLO_5x5":
                 return queue["tier"] + " " + queue["rank"]
         return "unranked I"
 
-    def get_rank_by_name(self, name:str, region:str="euw1",soloq:bool=True):
-        id = self.get_id_by_name_region(name, region)
-        return self.get_rank_by_id(id, region, soloq)
-
-    def get_acc_id_by_name_region(self, name:str, region:str):
-        pass
-    
-    def get_acc_id_by_name_euw():
-        pass
-
-    def get_acc_id_by_name_na():
-        pass
-
-    def get_matchlist_by_acc_id():
+    def get_matchlist(self):
         pass
 
 if __name__ == "__main__":
     rapi = RiotApi()
     rapi.update_credentials()
     rapi.print_key() 
-    id = rapi.get_id_by_name_euw("C SideStep")
-    print(id)
-    print(rapi.get_rank_by_id(id))
-    print(rapi.get_rank_by_name("Alien Mazort"))
+    acc1 = rapi.get_acc_by_name("C SideStep", EUW)
+    acc2 = rapi.get_acc_by_name("Alien Mazort", EUW)
+    print(rapi.get_rank(acc1))
+    print(rapi.get_rank(acc2))
