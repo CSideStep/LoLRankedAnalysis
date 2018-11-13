@@ -1,0 +1,2 @@
+20 requests every 1 second
+100 requests every 2 minutes
